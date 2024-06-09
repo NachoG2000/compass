@@ -49,18 +49,20 @@ public class RequestObject {
         private String email;
         private String birthday;
         private String gender;
-        private String modality;
+        private Long ofertaAcademicaId;
+        private Long universidadId;
 
         public UserData() {
             // Default constructor
         }
 
-        public UserData(String name, String email, String birthday, String gender, String modality) {
+        public UserData(String name, String email, String birthday, String gender, Long ofertaAcademicaId, Long universidadId) {
             this.name = name;
             this.email = email;
             this.birthday = birthday;
             this.gender = gender;
-            this.modality = modality;
+            this.ofertaAcademicaId = ofertaAcademicaId;
+            this.universidadId = universidadId;
         }
 
         public String getName() {
@@ -95,12 +97,20 @@ public class RequestObject {
             this.gender = gender;
         }
 
-        public String getModality() {
-            return modality;
+        public Long getOfertaAcademicaId() {
+            return ofertaAcademicaId;
         }
 
-        public void setModality(String modality) {
-            this.modality = modality;
+        public void setOfertaAcademicaId(Long ofertaAcademicaId) {
+            this.ofertaAcademicaId = ofertaAcademicaId;
+        }
+
+        public Long getUniversidadId() {
+            return universidadId;
+        }
+
+        public void setUniversidadId(Long universidadId) {
+            this.universidadId = universidadId;
         }
 
         @Override
@@ -110,7 +120,8 @@ public class RequestObject {
                     ", email='" + email + '\'' +
                     ", birthday='" + birthday + '\'' +
                     ", gender='" + gender + '\'' +
-                    ", modality='" + modality + '\'' +
+                    ", ofertaAcademica='" + ofertaAcademicaId + '\'' +
+                    ", universidad='" + universidadId +
                     '}';
         }
     }

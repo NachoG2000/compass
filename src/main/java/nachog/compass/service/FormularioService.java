@@ -14,8 +14,10 @@ import nachog.compass.entity.Pregunta;
 import nachog.compass.entity.Respuesta;
 import nachog.compass.entity.Usuario;
 import nachog.compass.repository.FormularioRepository;
+import nachog.compass.repository.OfertaAcademicaRepository;
 import nachog.compass.repository.PreguntaRepository;
 import nachog.compass.repository.RespuestaRepository;
+import nachog.compass.repository.UniversidadRepository;
 
 @Service
 public class FormularioService {
@@ -24,6 +26,8 @@ public class FormularioService {
     private final RespuestaRepository respuestaRepository;
     private final PreguntaRepository preguntaRepository;
     private final FormularioRepository formularioRepository;
+    private final OfertaAcademicaRepository ofertaAcademicaRepository;
+    private final UniversidadRepository universidadRepository;
     private final LLMService llmService;
     private final CarreraService carreraService;
 
@@ -32,13 +36,17 @@ public class FormularioService {
                              PreguntaRepository preguntaRepository,
                              FormularioRepository formularioRepository,
                              LLMService llmService,
-                             CarreraService carreraService) {
+                             CarreraService carreraService,
+                             OfertaAcademicaRepository ofertaAcademicaRepository,
+                             UniversidadRepository universidadRepository) {
         this.usuarioService = usuarioService;
         this.respuestaRepository = respuestaRepository;
         this.preguntaRepository = preguntaRepository;
         this.formularioRepository = formularioRepository;
         this.llmService = llmService;
         this.carreraService = carreraService;
+        this.ofertaAcademicaRepository = ofertaAcademicaRepository;
+        this.universidadRepository = universidadRepository;
     }
 
     public List<Carrera> processFormularioRequest(RequestObject request) {
@@ -47,8 +55,9 @@ public class FormularioService {
 
         String respuestasFormatted = saveRespuestasAndGetFormattedString(request.getSurveyData(), usuario);
 
-        Long idOfertaAcademica = 1L;  // CAMBIAR ESTO CUANDO PUEDA PASAR EL ID DE OFERTA ACADEMICA DESDE EL FRONTEND
-        String carreras = carreraService.getCarrerasDisponiblesString(idOfertaAcademica);
+        // Long idOfertaAcademica = 1L;  // CAMBIAR ESTO CUANDO PUEDA PASAR EL ID DE OFERTA ACADEMICA DESDE EL FRONTEND
+        String carreras = 
+        carreraService.getCarrerasDisponiblesString(usuario.getOfertaSeleccionada().getId_oferta_academica());
 
         List<Carrera> carrerasSeleccionadas = llmService.generateCarrerasList(respuestasFormatted, carreras);
 
@@ -57,13 +66,17 @@ public class FormularioService {
         return carrerasSeleccionadas;
     }
 
-    private Usuario mapToUsuario(UserData userData) {
+    private Usuario mapToUsuario(UserData userData) { // falta la universidad seleccionada en userdata
+        System.out.println(userData.toString());
+        
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario(userData.getName());
         usuario.setEmail(userData.getEmail());
         usuario.setFechaNacimiento(userData.getBirthday());
         usuario.setGenero(userData.getGender());
-        usuario.setModalidadDeseada(userData.getModality());
+        usuario.setOfertaSeleccionada(ofertaAcademicaRepository.findById(userData.getOfertaAcademicaId()).orElseThrow());
+        usuario.setUniversidadSeleccionada(universidadRepository.findById(userData.getUniversidadId()).orElseThrow());
+
         return usuario;
     }
 
@@ -108,5 +121,15 @@ public class FormularioService {
 
     public List<Pregunta> getPreguntas(Long formularioId) {
         return preguntaRepository.findByFormularioId(formularioId);
+    }
+
+    public List<Pregunta> getPreguntasPorUniversidadId(Long universidadId) {
+        Long formularioId = obtenerFormularioIdPorUniversidadId(universidadId);
+        return getPreguntas(formularioId);
+    }
+
+    private Long obtenerFormularioIdPorUniversidadId(Long universidadId) {
+        Formulario formulario = formularioRepository.findByUniversidadIdUniversidad(universidadId);
+        return formulario.getId_formulario();
     }
 }

@@ -8,7 +8,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Usuario {
@@ -21,8 +23,14 @@ public class Usuario {
     private String email;
     private String fechaNacimiento;
     private String genero;
-    private String modalidadDeseada;
-    private String duracionDeseada;
+    
+    @OneToOne
+    @JoinColumn(name = "id_universidad_seleccionada")
+    private Universidad universidadSeleccionada;
+
+    @OneToOne
+    @JoinColumn(name = "id_oferta_seleccionada")
+    private OfertaAcademica ofertaSeleccionada;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Respuesta> respuestas;
@@ -71,20 +79,20 @@ public class Usuario {
         this.genero = genero;
     }
 
-    public String getModalidadDeseada() {
-        return modalidadDeseada;
+    public Universidad getUniversidadSeleccionada() {
+        return universidadSeleccionada;
     }
 
-    public void setModalidadDeseada(String modalidadDeseada) {
-        this.modalidadDeseada = modalidadDeseada;
+    public void setUniversidadSeleccionada(Universidad universidadSeleccionada) {
+        this.universidadSeleccionada = universidadSeleccionada;
     }
 
-    public String getDuracionDeseada() {
-        return duracionDeseada;
+    public OfertaAcademica getOfertaSeleccionada() {
+        return ofertaSeleccionada;
     }
 
-    public void setDuracionDeseada(String duracionDeseada) {
-        this.duracionDeseada = duracionDeseada;
+    public void setOfertaSeleccionada(OfertaAcademica ofertaSeleccionada) {
+        this.ofertaSeleccionada = ofertaSeleccionada;
     }
 
     public List<Respuesta> getRespuestas() {

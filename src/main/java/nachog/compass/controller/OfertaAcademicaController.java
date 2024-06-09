@@ -1,7 +1,10 @@
 package nachog.compass.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nachog.compass.DTO.OfertaAcademicaResponseDTO;
 import nachog.compass.entity.OfertaAcademica;
 import nachog.compass.entity.Universidad;
 import nachog.compass.repository.OfertaAcademicaRepository;
@@ -18,6 +22,7 @@ import nachog.compass.repository.UniversidadRepository;
 
 @RestController
 @RequestMapping("/ofertas")
+@CrossOrigin(origins = "http://localhost:5173")
 public class OfertaAcademicaController {
 
     private OfertaAcademicaRepository ofertaAcademicaRepository;
@@ -61,5 +66,20 @@ public class OfertaAcademicaController {
     @DeleteMapping("/{id}")
     public void deleteOferta(@PathVariable Long id) {
         ofertaAcademicaRepository.deleteById(id);
+    }
+
+    @GetMapping("/universidad/{universidadId}")
+    public List<OfertaAcademicaResponseDTO> getOfertasByUniversidadId(@PathVariable Long universidadId) {
+        Universidad universidad = universidadRepository.findById(universidadId).orElse(null);
+        if (universidad != null) {
+            return ofertaAcademicaRepository.findByUniversidadIdUniversidad(universidadId).stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    private OfertaAcademicaResponseDTO convertToDto(OfertaAcademica ofertaAcademica) {
+        return new OfertaAcademicaResponseDTO(ofertaAcademica.getId_oferta_academica(), ofertaAcademica.getTipo_oferta());
     }
 }

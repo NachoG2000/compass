@@ -37,16 +37,22 @@ public class FormularioController {
     public Pregunta createPregunta(@RequestBody Pregunta pregunta) {
     return formularioService.createPregunta(pregunta);
     }
-
-    @GetMapping("/getPreguntas/{formularioId}")
-    public ResponseEntity<List<Pregunta>> getPreguntas(@PathVariable Long formularioId) {
-    return ResponseEntity.ok(formularioService.getPreguntas(formularioId));
+    
+    @GetMapping("/preguntas/{universidadId}")
+    public ResponseEntity<List<Pregunta>> getPreguntasPorUniversidad(@PathVariable Long universidadId) {
+        List<Pregunta> preguntas = formularioService.getPreguntasPorUniversidadId(universidadId);
+        return ResponseEntity.ok(preguntas);
     }
 
     @PostMapping("/formulario")
     public ResponseEntity<List<Carrera>> handleFormularioRequest(@RequestBody RequestObject request) {
         // Manejar la solicitud del formulario utilizando el servicio
+        System.out.println("Received request: " + request);
+
         List<Carrera> response = formularioService.processFormularioRequest(request);
+
+        System.out.println("Response to be sent: " + response);
+
         return ResponseEntity.ok(response);
     }
 

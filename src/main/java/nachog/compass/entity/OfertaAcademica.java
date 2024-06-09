@@ -2,6 +2,7 @@ package nachog.compass.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -23,6 +24,7 @@ public class OfertaAcademica {
 
     @ManyToOne
     @JoinColumn(name = "id_universidad")
+    @JsonBackReference
     private Universidad universidad;
 
     @OneToMany(mappedBy = "ofertaAcademica", cascade = CascadeType.ALL, orphanRemoval = true)
