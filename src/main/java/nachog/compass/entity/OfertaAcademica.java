@@ -27,6 +27,10 @@ public class OfertaAcademica {
     @JsonBackReference
     private Universidad universidad;
 
+    @OneToMany(mappedBy = "ofertaSeleccionada", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Usuario> usuarios;
+
     @OneToMany(mappedBy = "ofertaAcademica", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Carrera> carreras;
