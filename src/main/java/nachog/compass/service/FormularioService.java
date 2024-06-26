@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import nachog.compass.DTO.RequestObject;
@@ -55,7 +56,6 @@ public class FormularioService {
 
         String respuestasFormatted = saveRespuestasAndGetFormattedString(request.getSurveyData(), usuario);
 
-        // Long idOfertaAcademica = 1L;  // CAMBIAR ESTO CUANDO PUEDA PASAR EL ID DE OFERTA ACADEMICA DESDE EL FRONTEND
         String carreras = 
         carreraService.getCarrerasDisponiblesString(usuario.getOfertaSeleccionada().getId_oferta_academica());
 
@@ -66,7 +66,7 @@ public class FormularioService {
         return carrerasSeleccionadas;
     }
 
-    private Usuario mapToUsuario(UserData userData) { // falta la universidad seleccionada en userdata
+    private Usuario mapToUsuario(UserData userData) { 
         System.out.println(userData.toString());
         
         Usuario usuario = new Usuario();
@@ -115,10 +115,12 @@ public class FormularioService {
         return formularioRepository.save(formulario);
     }
 
-    public Pregunta createPregunta(Pregunta pregunta) {
+    public Pregunta createPreguntaPorUniversidad(Pregunta pregunta, Long universidadId){
+        Long formularioId = obtenerFormularioIdPorUniversidadId(universidadId);
+        pregunta.setFormulario(formularioRepository.findById(formularioId).orElse(null));
         return preguntaRepository.save(pregunta);
     }
-
+    
     public List<Pregunta> getPreguntas(Long formularioId) {
         return preguntaRepository.findByFormularioId(formularioId);
     }
@@ -131,5 +133,20 @@ public class FormularioService {
     private Long obtenerFormularioIdPorUniversidadId(Long universidadId) {
         Formulario formulario = formularioRepository.findByUniversidadIdUniversidad(universidadId);
         return formulario.getId_formulario();
+    }
+
+    public void deletePregunta(Long id) {
+        preguntaRepository.deleteById(id);
+    }
+
+    public ResponseEntity<Pregunta> updatePregunta(Long id, Pregunta preguntaDetails) {
+        Pregunta pregunta = preguntaRepository.findById(id).orElse(null);
+        if (pregunta != null) {
+            pregunta.setTexto_pregunta(preguntaDetails.getTexto_pregunta());
+            Pregunta updatedPregunta = preguntaRepository.save(pregunta);
+            return ResponseEntity.ok(updatedPregunta);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

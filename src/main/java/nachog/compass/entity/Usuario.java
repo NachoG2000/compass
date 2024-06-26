@@ -28,12 +28,12 @@ public class Usuario {
     
     @ManyToOne
     @JoinColumn(name = "id_universidad_seleccionada")
-    @JsonBackReference
+    @JsonBackReference("universidad-usuario")
     private Universidad universidadSeleccionada;
 
     @ManyToOne
     @JoinColumn(name = "id_oferta_seleccionada")
-    @JsonBackReference
+    @JsonBackReference("oferta-usuario")
     private OfertaAcademica ofertaSeleccionada;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -106,4 +106,5 @@ public class Usuario {
     public void setRespuestas(List<Respuesta> respuestas) {
         this.respuestas = respuestas;
     }
+
 }

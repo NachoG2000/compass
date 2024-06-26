@@ -1,21 +1,24 @@
 package nachog.compass.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.http.ResponseEntity;
 
+import nachog.compass.DTO.PreguntaRequestDTO;
 import nachog.compass.DTO.RequestObject;
 import nachog.compass.entity.Carrera;
 import nachog.compass.entity.Formulario;
 import nachog.compass.entity.Pregunta;
 import nachog.compass.service.FormularioService;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/v1")
@@ -34,8 +37,14 @@ public class FormularioController {
     }
 
     @PostMapping("/createPregunta")
-    public Pregunta createPregunta(@RequestBody Pregunta pregunta) {
-    return formularioService.createPregunta(pregunta);
+    public ResponseEntity<Pregunta> createPregunta(@RequestBody PreguntaRequestDTO preguntaRequestDTO) {
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/createPregunta/{universidadId}")
+    public ResponseEntity<Pregunta> createPreguntaPorUniversidad(@RequestBody Pregunta pregunta, @PathVariable Long universidadId) {
+        Pregunta createdPregunta = formularioService.createPreguntaPorUniversidad(pregunta, universidadId);
+        return ResponseEntity.ok(createdPregunta);
     }
     
     @GetMapping("/preguntas/{universidadId}")
@@ -56,4 +65,14 @@ public class FormularioController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/deletePregunta/{id}")
+    public ResponseEntity<Void> deletePregunta(@PathVariable Long id) {
+        formularioService.deletePregunta(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/updatePregunta/{id}")
+    public ResponseEntity<Pregunta> updatePregunta(@PathVariable Long id, @RequestBody Pregunta preguntaDetails) {
+        return formularioService.updatePregunta(id, preguntaDetails);
+    }
 }

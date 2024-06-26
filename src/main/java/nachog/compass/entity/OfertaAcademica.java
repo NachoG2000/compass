@@ -24,11 +24,11 @@ public class OfertaAcademica {
 
     @ManyToOne
     @JoinColumn(name = "id_universidad")
-    @JsonBackReference
+    @JsonBackReference("universidad-oferta")
     private Universidad universidad;
 
     @OneToMany(mappedBy = "ofertaSeleccionada", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("oferta-usuario")
     private List<Usuario> usuarios;
 
     @OneToMany(mappedBy = "ofertaAcademica", cascade = CascadeType.ALL, orphanRemoval = true)

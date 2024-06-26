@@ -22,11 +22,11 @@ public class Universidad {
     private String nombre;
 
     @OneToMany(mappedBy = "universidadSeleccionada", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("universidad-usuario")
     private List<Usuario> usuarios;
 
     @OneToMany(mappedBy = "universidad", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("universidad-oferta")
     private List<OfertaAcademica> ofertasAcademicas;
 
     @OneToOne(mappedBy = "universidad", cascade = CascadeType.ALL, orphanRemoval = true)
