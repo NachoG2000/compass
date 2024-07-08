@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,22 +37,7 @@ public class CarreraController {
         this.ofertaAcademicaRepository = ofertaAcademicaRepository;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Carrera>> getAllCarreras() {
-        List<Carrera> carreras = carreraRepository.findAll();
-        return ResponseEntity.ok(carreras);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Carrera> getCarreraById(@PathVariable Long id) {
-        Carrera carrera = carreraRepository.findById(id).orElse(null);
-        if (carrera != null) {
-            return ResponseEntity.ok(carrera);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<Carrera>> getCarrerasSeleeccionadasPorUsuarioId(@PathVariable Long usuarioId) {
         List<CarreraSeleccionada> carrerasSeleccionadas = carreraSeleccionadaRepository.findByIdIdUsuario(usuarioId);
@@ -61,8 +47,9 @@ public class CarreraController {
         return ResponseEntity.ok(carreras);
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @PostMapping("/oferta/{ofertaId}")
-    public ResponseEntity<Carrera> createCarrera(@PathVariable Long ofertaId, @RequestBody Carrera carrera) {
+    public ResponseEntity<Carrera> createCarreraPorOfertaId(@PathVariable Long ofertaId, @RequestBody Carrera carrera) {
         OfertaAcademica ofertaAcademica = ofertaAcademicaRepository.findById(ofertaId).orElse(null);
         if (ofertaAcademica != null) {
             carrera.setOfertaAcademica(ofertaAcademica);
@@ -73,6 +60,7 @@ public class CarreraController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @GetMapping("/oferta/{ofertaId}")
     public ResponseEntity<List<Carrera>> getCarrerasPorOfertaId(@PathVariable Long ofertaId) {
         OfertaAcademica ofertaAcademica = ofertaAcademicaRepository.findById(ofertaId).orElse(null);
@@ -84,6 +72,7 @@ public class CarreraController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @PutMapping("/{id}")
     public ResponseEntity<Carrera> updateCarrera(@PathVariable Long id, @RequestBody Carrera carreraDetails) {
         Carrera carrera = carreraRepository.findById(id).orElse(null);
@@ -99,9 +88,26 @@ public class CarreraController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCarrera(@PathVariable Long id) {
         carreraRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
+
+    // @GetMapping
+    // public ResponseEntity<List<Carrera>> getAllCarreras() {
+    //     List<Carrera> carreras = carreraRepository.findAll();
+    //     return ResponseEntity.ok(carreras);
+    // }
+
+    // @GetMapping("/{id}")
+    // public ResponseEntity<Carrera> getCarreraById(@PathVariable Long id) {
+    //     Carrera carrera = carreraRepository.findById(id).orElse(null);
+    //     if (carrera != null) {
+    //         return ResponseEntity.ok(carrera);
+    //     } else {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    // }

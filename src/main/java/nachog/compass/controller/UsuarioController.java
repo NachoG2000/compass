@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import nachog.compass.entity.Universidad;
@@ -25,36 +26,28 @@ public class UsuarioController {
         this.universidadRepository = universidadRepository;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Usuario>> getAllUsuarios() {
-        List<Usuario> usuarios = usuarioService.findAllUsuarios();
-        return ResponseEntity.ok().body(usuarios);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
-        Usuario usuario = usuarioService.findUsuarioById(id);
-        return ResponseEntity.ok().body(usuario);
-    }
-
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @PostMapping
     public ResponseEntity<Usuario> createUsuario(@RequestBody Usuario usuario) {
         Usuario newUsuario = usuarioService.saveUsuario(usuario);
         return ResponseEntity.ok().body(newUsuario);
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
         Usuario updatedUsuario = usuarioService.updateUsuario(id, usuarioDetails);
         return ResponseEntity.ok().body(updatedUsuario);
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         usuarioService.deleteUsuario(id);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @GetMapping("/universidad/{universidadId}")
     public ResponseEntity<List<UsuarioResponseDTO>> getUsuariosPorUniversidadId(@PathVariable Long universidadId) {
         Universidad universidad = universidadRepository.findById(universidadId).orElse(null);
@@ -78,5 +71,16 @@ public class UsuarioController {
         usuarioDTO.setGenero(usuario.getGenero());
         return usuarioDTO;
     }
-
 }
+
+    // @GetMapping
+    // public ResponseEntity<List<Usuario>> getAllUsuarios() {
+    //     List<Usuario> usuarios = usuarioService.findAllUsuarios();
+    //     return ResponseEntity.ok().body(usuarios);
+    // }
+
+    // @GetMapping("/{id}")
+    // public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
+    //     Usuario usuario = usuarioService.findUsuarioById(id);
+    //     return ResponseEntity.ok().body(usuario);
+    // 

@@ -9,4 +9,5 @@ import nachog.compass.entity.CarreraSeleccionadaKey;
 
 public interface CarreraSeleccionadaRepository extends JpaRepository<CarreraSeleccionada, CarreraSeleccionadaKey> {
     List<CarreraSeleccionada> findByIdIdUsuario(Long idUsuario);
+    void deleteByIdIdUsuario(Long idUsuario);
 }

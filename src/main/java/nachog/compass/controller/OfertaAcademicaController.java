@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,26 +34,7 @@ public class OfertaAcademicaController {
         this.universidadRepository = universidadRepository;
     }
 
-    @GetMapping
-    public List<OfertaAcademica> getAllOfertas() {
-        return ofertaAcademicaRepository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public OfertaAcademica getOfertaById(@PathVariable Long id) {
-        return ofertaAcademicaRepository.findById(id).orElse(null);
-    }
-
-    @PostMapping("/universidad/{universidadId}")
-    public OfertaAcademica createOferta(@PathVariable Long universidadId, @RequestBody OfertaAcademica ofertaAcademica) {
-        Universidad universidad = universidadRepository.findById(universidadId).orElse(null);
-        if (universidad != null) {
-            ofertaAcademica.setUniversidad(universidad);
-            return ofertaAcademicaRepository.save(ofertaAcademica);
-        }
-        return null;
-    }
-
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @PutMapping("/{id}")
     public OfertaAcademica updateOferta(@PathVariable Long id, @RequestBody OfertaAcademica ofertaDetails) {
         OfertaAcademica ofertaAcademica = ofertaAcademicaRepository.findById(id).orElse(null);
@@ -63,9 +45,21 @@ public class OfertaAcademicaController {
         return null;
     }
 
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
     @DeleteMapping("/{id}")
     public void deleteOferta(@PathVariable Long id) {
         ofertaAcademicaRepository.deleteById(id);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') and @administradorSecurityService.hasAccessToUniversidad(authentication, #id)")
+    @PostMapping("/create/universidad/{universidadId}")
+    public OfertaAcademica createOfertaPorUniversidadId(@PathVariable Long universidadId, @RequestBody OfertaAcademica ofertaAcademica) {
+        Universidad universidad = universidadRepository.findById(universidadId).orElse(null);
+        if (universidad != null) {
+            ofertaAcademica.setUniversidad(universidad);
+            return ofertaAcademicaRepository.save(ofertaAcademica);
+        }
+        return null;
     }
 
     @GetMapping("/universidad/{universidadId}")
@@ -83,3 +77,13 @@ public class OfertaAcademicaController {
         return new OfertaAcademicaResponseDTO(ofertaAcademica.getId_oferta_academica(), ofertaAcademica.getTipo_oferta());
     }
 }
+
+    // @GetMapping
+    // public List<OfertaAcademica> getAllOfertas() {
+    //     return ofertaAcademicaRepository.findAll();
+    // }
+
+    // @GetMapping("/{id}")
+    // public OfertaAcademica getOfertaById(@PathVariable Long id) {
+    //     return ofertaAcademicaRepository.findById(id).orElse(null);
+    // }

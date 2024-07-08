@@ -1,11 +1,15 @@
 package nachog.compass.entity;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 @Entity
 public class Administrador {
@@ -62,5 +66,11 @@ public class Administrador {
 
     public void setUniversidad(Universidad universidad) {
         this.universidad = universidad;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void encodePassword() {
+        this.contrasenaAdmin = new BCryptPasswordEncoder().encode(this.contrasenaAdmin);
     }
 }

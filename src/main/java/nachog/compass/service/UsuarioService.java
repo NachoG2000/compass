@@ -4,16 +4,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import nachog.compass.entity.Usuario;
+import nachog.compass.repository.CarreraSeleccionadaRepository;
 import nachog.compass.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final CarreraSeleccionadaRepository carreraSeleccionadaRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, CarreraSeleccionadaRepository carreraSeleccionadaRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.carreraSeleccionadaRepository = carreraSeleccionadaRepository;
     }
 
     public Usuario saveUsuario(Usuario usuario) {
@@ -40,7 +44,11 @@ public class UsuarioService {
         return null;
     }
 
+    @Transactional
     public void deleteUsuario(Long id) {
+        // Eliminar registros relacionados en carrera_seleccionada
+        carreraSeleccionadaRepository.deleteByIdIdUsuario(id);
+
         usuarioRepository.deleteById(id);
     }
 
