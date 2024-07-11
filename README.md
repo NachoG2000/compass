@@ -1,4 +1,4 @@
-# COMPASS AI Backend ### 
+# COMPASS AI ### 
 
 ## Project Overview
 COMPASS AI is an innovative SaaS B2B solution designed to revolutionize career guidance in universities. This Spring Boot backend powers a platform that leverages generative AI to help prospective students find their ideal career paths.
