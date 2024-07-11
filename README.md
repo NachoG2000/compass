@@ -54,3 +54,9 @@ Demonstrated proficiency in full-stack development, AI integration, and software
 
 Ignacio Garcia - ignaciongarcia00@gmail.com - Linkedin: linkedin.com/in/ignaciongarcia00 
 
+## Gallery
+
+![Entity-Relationship Diagram](https://github.com/NachoG2000/compass/assets/102384521/95217b6f-c666-49f6-b7c5-f2e76ee59da9)
+![Secuence Diagram](https://github.com/NachoG2000/compass/assets/102384521/459e597b-3d32-44a7-ac23-9b936e130d7a)
+
+
